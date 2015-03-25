@@ -1,20 +1,25 @@
 # coding=utf-8
 
 from flask import Flask
-import app.summary as summary
+import app.summary
+
+webapp = Flask(__name__)
 
 
-app = Flask(__name__)
-
-
-@app.route('/dealsummary')
+@webapp.route('/dealsummary')
 def dealsummary():
-    return summary.query_dealsummary()
+    return app.summary.query_dealsummary()[0]
 
-@app.route('/usersummary')
+
+@webapp.route('/getdealsummary')
+def getdealsummary():
+    return app.summary.query_dealsummary()[1]
+
+
+@webapp.route('/usersummary')
 def usersummary():
-    return summary.query_usersummary()
+    return app.summary.query_usersummary()[0]
 
 
 if __name__ == '__main__':
-    app.run()
+    webapp.run()

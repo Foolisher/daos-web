@@ -1,0 +1,61 @@
+
+
+upstream daos_web_server{
+    server localhost:5000;
+}
+
+server {
+
+    listen 80 ;
+    server_name  www.daos.com;
+
+    # individual nginx logs for this web vhost
+    access_log 	/usr/local/etc/nginx/logs/daos-web/access.log;
+    error_log	  /usr/local/etc/nginx/logs/daos-web/error.log;
+
+    root /Users/wanggen/workspace/daos-web;
+    index /components/index.html;
+
+    #when not specify request uri, redirect to /index;
+    location = / {
+        rewrite ^ /components/index.html;
+    }
+
+    location = /favicon.ico {
+       return  404;
+    }
+
+    location ~ /(.*)\.html {
+     break;
+    }
+
+    #static files
+    location ~ ^/(images|styles|scripts)/(.*)$ {
+      root /Users/wanggen/workspace/daos-web/static;
+      expires 30d;
+      access_log off;
+    }
+
+
+    location ~ ^/components/.*(.js|.css)$ {
+      root /Users/wanggen/workspace/daos-web;
+      expires 30d;
+      access_log off;
+    }
+
+
+    location ~ ^/iframes/(.*)$ {
+      root /Users/wanggen/workspace/daos-web;
+      expires 30d;
+      access_log off;
+    }
+
+
+    #if request path starts with /admin, then just pass to back server
+    location ~ ^/(.*)$ {
+       proxy_pass http://daos_web_server;
+       proxy_set_header        X-Real-IP $remote_addr;
+       proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;
+       proxy_set_header        Host $http_host;
+    }
+}
