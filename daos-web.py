@@ -20,7 +20,7 @@ def index():
 @app.route('/dealsummary')
 def dealsummary():
     return env.get_template("components/dealsummary/view.html")\
-            .render(data=do_query_dealsummary(), component='dealsummary')
+            .render(data=do_query_dealsummary(), component='dealsummary', js=True)
 
 def do_query_dealsummary():
     try:

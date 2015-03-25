@@ -51,9 +51,12 @@
 <script>
 
     $(function($) {
-
+        {% if js %}
         $("head").append('<script src="components/{{component}}/view.js"/>')
-//                 .append('<script src="components/{{component}}/view.css"/>');
+        {% endif %}
+        {% if css %}
+        $("head").append('<link rel="stylesheet" href="components/{{component}}/view.css"/>');
+        {% endif %}
 
     });
 
