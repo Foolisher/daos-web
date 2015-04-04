@@ -2,27 +2,25 @@
  * Created by wanggen on 15/3/25.
  */
 
-console.log("Component dealsummary is setup");
-
-
 $.getJSON('/getdealsummary', function(data){
 
     data = data.reverse();
 
-    var dates       = _.map(data, function(row){ return row['sum_for'] });
+    var dates       = _.map(data, function(row){ return row['sum_for'].substr(6,2) });
     var deals       = _.map(data, function(row){ return row['deal'] });
     var deal_items  = _.map(data, function(row){ return row['deal_item'] });
     var deal_orders = _.map(data, function(row){ return row['deal_order'] });
+    var type = dates.length <= 10 ? 'column' : 'spline';
 
     $('#container').highcharts({
         chart: {
-            type: 'column'
+            type: type
         },
         title: {
             text: '交易数据'
         },
         subtitle: {
-            text: 'www.daos.com'
+            text: '<strong>'+data[0]['sum_for'].substr(0,6)+'</strong>'
         },
         xAxis: {
             categories: dates
@@ -30,13 +28,13 @@ $.getJSON('/getdealsummary', function(data){
         yAxis: {
             min: 0,
             title: {
-                text: '---'
+                text: ''
             }
         },
         tooltip: {
             headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
-            pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
-                         '<td style="padding:0"><b>{point.y:.1f}</b></td></tr>',
+            pointFormat:  '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                          '<td style="padding:0"><b>{point.y:.1f}</b></td></tr>',
             footerFormat: '</table>',
             shared: true,
             useHTML: true

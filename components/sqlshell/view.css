@@ -1,0 +1,31 @@
+
+
+#sql{
+    border-bottom-left-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+    height: 180px;
+    resize: none;
+    font-family:'Consolas', 'Monaco', 'Bitstream Vera Sans Mono', monospace;
+    font-size: 16px;
+    color: darkblue !important;
+    opacity: .8;
+    text-shadow: 1px 1px 1px rgba(0,0,0, 0.35);
+    background: #f5f5f5;
+    box-shadow: inset 1px 1px 7px grey;
+    padding: 10px;
+}
+
+.btn-sql-query{
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+
+#time{
+    float: right; color: red;
+}
+
+.important{
+    font-size: 15px;
+    font-weight: bolder;
+}
+

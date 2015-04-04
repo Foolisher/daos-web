@@ -1,40 +1,43 @@
 
-{% extends "components/index.html" %}
+{% extends "index.html" %}
 
 {% block title %}交易{% endblock %}
 
 {% block content %}
 
-    <div class="panel panel-primary">
-        <div class="panel-heading">
-            <h3 class="panel-title" id="panel-title">交易数据<a class="anchorjs-link" href="#panel-title"><span class="anchorjs-icon"></span></a></h3>
-        </div>
-        <div class="panel-body">
-            <div class="table-responsive">
-                <table id="board" class="table table-striped">
-                    <thead>
+<h1 class="page-header">图表</h1>
+<div id="container" style="min-width:600px;height:400px"></div>
+
+
+<h2 class="sub-header">数据</h2>
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h3 class="panel-title" id="panel-title">交易数据<a class="anchorjs-link" href="#panel-title"><span class="anchorjs-icon"></span></a></h3>
+    </div>
+    <div class="panel-body">
+        <div class="table-responsive">
+            <table id="board" class="table table-striped">
+                <thead>
+                <tr>
+                    <th>日期</th>
+                    <th>成交金额</th>
+                    <th>销量</th>
+                    <th>订单量</th>
+                </tr>
+                </thead>
+                <tbody>
+                    {% for row in data %}
                     <tr>
-                        <th>日期</th>
-                        <th>成交金额</th>
-                        <th>销量</th>
-                        <th>订单量</th>
+                        <td>{{row.sum_for}}</td>
+                        <td>{{row.deal}}</td>
+                        <td>{{row.deal_item}}</td>
+                        <td>{{row.deal_order}}</td>
                     </tr>
-                    </thead>
-                    <tbody>
-                        {% for row in data %}
-                        <tr>
-                            <td>{{row.sum_for}}</td>
-                            <td>{{row.deal}}</td>
-                            <td>{{row.deal_item}}</td>
-                            <td>{{row.deal_order}}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
     </div>
-
-<div id="container" style="min-width:700px;height:400px"></div>
+</div>
 
 {% endblock %}

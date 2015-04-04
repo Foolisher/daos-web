@@ -10,10 +10,10 @@ server {
     server_name  www.daos.com;
 
     # individual nginx logs for this web vhost
-    access_log 	/usr/local/etc/nginx/logs/daos-web/access.log;
-    error_log	  /usr/local/etc/nginx/logs/daos-web/error.log;
+    access_log   /var/log/nginx/logs/daos-web/access.log;
+    error_log	  /var/log/nginx/logs/daos-web/error.log;
 
-    root /Users/wanggen/workspace/daos-web;
+    root /home/admin/projects/daos-web;
     index /components/index.html;
 
     #when not specify request uri, redirect to /index;
@@ -31,21 +31,21 @@ server {
 
     #static files
     location ~ ^/(images|styles|scripts)/(.*)$ {
-      root /Users/wanggen/workspace/daos-web/static;
+      root /home/admin/projects/daos-web/static;
       expires 30d;
       access_log off;
     }
 
 
     location ~ ^/components/.*(.js|.css)$ {
-      root /Users/wanggen/workspace/daos-web;
+      root /home/admin/projects/daos-web;
       expires 30d;
       access_log off;
     }
 
 
     location ~ ^/iframes/(.*)$ {
-      root /Users/wanggen/workspace/daos-web;
+      root /home/admin/projects/daos-web;
       expires 30d;
       access_log off;
     }

@@ -1,0 +1,36 @@
+{% extends "index.html" %}
+
+{% block title %}SQL Shell{% endblock %}
+
+{% block content %}
+
+<h1 class="sub-header" style="font-size: 18px;">SQL console</h1>
+<div class="alert alert-danger" role="alert">
+    <p></p>
+</div>
+<small id="time">0 s</small>
+<textarea spellcheck="false" id="sql" class="form-control" placeholder="input sql ..."></textarea>
+<button class="btn btn-sql-query btn-info" style="width: 100%;"><strong>Query</strong></button>
+
+<h1 class="sub-header" style="font-size: 18px;">Result</h1>
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h3 class="panel-title" id="panel-title">Data records<a class="anchorjs-link" href="#panel-title"><span class="anchorjs-icon"></span></a></h3>
+    </div>
+    <div class="panel-body">
+        <div class="table-responsive" style="max-height: 500px;">
+            <table id="board" class="table table-striped">
+                <thead style="position: inherit;margin-bottom: 36px;">
+                <tr>
+                </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

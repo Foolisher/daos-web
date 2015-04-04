@@ -1,0 +1,121 @@
+{% extends "index.html" %}
+
+{% block headers %}<script src="scripts/prism.js"></script>{% endblock %}
+
+{% block title %}Spark-Jobs{% endblock %}
+
+{% block content %}
+
+<div class="panel panel-default">
+    <div id="panel-heading" class="panel-heading">SparkSQL Jobs <span id="btn-add-job" class="show-form" style="cursor: pointer;float: right;"></span></div>
+    <div id="panel-add-job" class="panel-body" style="display: none;">
+        <div class="align-center">
+            <form class="navbar-form navbar-nav" role="search" action="/sparkjob" method="post">
+                <div class="panel panel-warning">
+                    <div class="panel-heading">
+                        <h3 class="panel-title" id="panel-title">Add Schedule Job<a class="anchorjs-link" href="#panel-title"><span class="anchorjs-icon"></span></a></h3>
+                    </div>
+                    <div class="panel-body">
+                        <table>
+                            <tr>
+                                <td><label for="job_id">SparkSQL Job ID:</label></td>
+                                <td>
+                                    <input id="job_id" maxlength="100" name="job_id" type="text" class="form-control"
+                                           placeholder="job id to identity one unique job">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><label>Hour Of Day:</label></td>
+                                <td>
+                                    <input id="hour" name="hour" type="text" class="form-control"
+                                           placeholder="hour between 0~23">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><label>Time to leave(days):</label></td>
+                                <td>
+                                    <input id="ttl" name="ttl" type="text" class="form-control"
+                                           placeholder="expires days of job result e.g. 30">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><label for="sql">Job SQL:</label></td>
+                                <td>
+                                    <textarea id="sql" name="sql" class="form-control" placeholder="input query sql"
+                                              spellcheck="false"></textarea>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">
+                                    <button type="submit" style="width: 100%;" class="btn btn-primary">Submit</button>
+                                </td>
+                            </tr>
+                        </table>
+
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+    <table id="table-job" class="table table-hover">
+        <thead class="">
+            <tr>
+                <th>JOB_ID</th>
+                <th>Latest Time Cost(second)</th>
+                <th>Latest Exec Stat</th>
+                <th>Daily</th>
+                <th>TTL(second)</th>
+                <th>View Result</th>
+                <th style="width: 70px;">Delete</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for job in data %}
+            <tr class="{% if job.last_exec_stat==-1 %}warning{% endif %}">
+                <th style="max-width:100px;">{{job.job_id}}</th>
+                <td>{% if job.last_time_cost!=None %}{{job.last_time_cost}} S{% else %} - - {% endif %}</td>
+                {% if job.last_exec_stat==-1 %}
+                    <td class="job-fail">FAIL</td>
+                {% else %}
+                    {% if job.last_exec_stat==1 %}<td class="job-success">OK</td>{% else %}<td> - - </td>{% endif %}
+                {% endif %}
+                <td width="20">{{job.hour}}:00:00</td>
+                <td width="20">{{job.ttl}} S</td>
+                <td width="120"><div class="btn-view-result"></div></td>
+                <td>
+                    <img class="btn-del-job" src="/images/ic_highlight_remove_24px.svg" style="cursor: pointer;">
+                </td>
+            </tr>
+            <tr style="display: none;">
+                <td colspan="7">
+                    <pre class="language-sql"><code class="language-sql">{{job.sql}}</code></pre>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</div>
+
+
+<div class="panel panel-default">
+    <div class="panel-heading job-id-name">{job_id} results</div>
+    <table class="table table-bordered table-striped table-job-result">
+        <thead>
+            <tr>
+                <th>#</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <!--<th scope="row">1</th>-->
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+
+
+{% endblock %}

@@ -1,0 +1,4 @@
+jinja2=latest
+flask=latest
+
+pip install APSScheduler
