@@ -27,11 +27,12 @@ $(".btn-sql-query").click(function () {
         success: function(data){
             if (data.data !== undefined) {
                 data = data.data;
-                var header = '', k;
+                var header = '<th>#</th>', n=1;
                 for (k in data[0]) header += '<th>' + k + '</th>'
                 $table.find("thead tr").html(header);
+                $("#row-count").html(data.length);
                 _.each(data, function(row){
-                    var tds = '<tr>', k;
+                    var tds = '<tr><td>'+(n++)+'</td>';
                     for (k in row) tds += '<td>' + row[k] + '</td>';
                     tds += '</tr>';
                     $table.find("tbody").append(tds)
@@ -45,7 +46,8 @@ $(".btn-sql-query").click(function () {
         },
         complete: function(){
             $(".btn-sql-query").removeClass('disabled');
-            clearInterval(check);  for(i in [1,2,3,4]) $time.fadeToggle()
+            clearInterval(check);  for(i in [1,2,3,4]) $time.fadeToggle();
+            $('table').tablesort();
         },
         dataType: 'json'
     });

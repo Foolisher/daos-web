@@ -8,6 +8,7 @@
 
 import logging
 from cassandra.cluster import Cluster
+from cassandra.decoder import dict_factory
 
 from jinja2 import Environment, PackageLoader
 
@@ -16,7 +17,8 @@ logging.basicConfig(level=logging.DEBUG)
 
 __author__ = 'wanggen'
 
-logging.info("Initialize web environment!!!")
-
 template_env = Environment(loader=PackageLoader(package_name='components', package_path='/'))
-session = Cluster(contact_points=["wg-linux"]).connect("groupon")
+session = Cluster(contact_points=["wg-linux"]).connect("terminus_data")
+session.row_factory = dict_factory
+
+app_name='ecp-'

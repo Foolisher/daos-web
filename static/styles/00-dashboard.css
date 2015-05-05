@@ -104,5 +104,12 @@ body {
   border-radius: 50%;
 }
 
+thead th{
+    cursor: pointer !important;
+}
 
+.line{
+    border-bottom: 1px dashed rgba(0, 0, 0, 0.125);
+    margin: 10px 10px;
+}
 

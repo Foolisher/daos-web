@@ -7,19 +7,41 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% block title %}Daos Dashboard{% endblock %}</title>
 
-    <script src="scripts/jquery.min.js"></script>
-    <script src="scripts/jquery.cookie.js"></script>
-    <script src="scripts/bootstrap.min.js"></script>
-    <script src="scripts/underscore-min.js"></script>
-    <script src="scripts/highcharts.js"></script>
-    <script src="scripts/exporting.js"></script>
+    <!--<script src="scripts/jquery.min.js"></script>-->
+    <!--<script src="scripts/jquery.cookie.js"></script>-->
+    <!--<script src="scripts/bootstrap.min.js"></script>-->
+    <!--<script src="scripts/underscore-min.js"></script>-->
+    <!-- <script src="scripts/highcharts.js"></script> -->
+    <!--<script src="scripts/exporting.js"></script>-->
+    <!--<script src="scripts/jquery.tablesort.js"></script>-->
+    <script src="/scripts/all.js"></script>
 
-    <link rel="stylesheet" href="styles/dashboard.css">
-    <link rel="stylesheet" href="styles/bootstrap.min.css">
+    <!--<link rel="stylesheet" href="styles/00-dashboard.css">-->
+    <!--<link rel="stylesheet" href="styles/bootstrap.min.css">-->
+    <link rel="stylesheet" href="/styles/all.css">
 
 {% block headers %}{% endblock %}
-
+ 
 </head>
+
+<div class="modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close btn-modal-close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">提示</h4>
+            </div>
+            <div class="modal-body">
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default btn-modal-cancel" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary btn-modal-confirm" data-dismiss="modal">Confirm</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <body>
 
 
@@ -36,7 +58,7 @@
                 <li><a href="#">Help</a></li>
             </ul>
             <form class="navbar-form navbar-right">
-                <input type="text" class="form-control" placeholder="Search...">
+                <input id="search" type="text" class="form-control" placeholder="Search...">
             </form>
         </div>
     </div>
@@ -47,13 +69,11 @@
     <div class="row">
         <div class="col-sm-3 col-md-2 sidebar">
             <ul class="nav nav-sidebar">
-                <li><a href="/dealsummary">Trade</a></li>
-                <li><a href="/usersummary">Customer</a></li>
+                <!--<li><a href="/dealsummary">Trade</a></li>-->
+                <!--<li><a href="/usersummary">Customer</a></li>-->
                 <li><a href="/sqlshell">SQL console</a></li>
-                <li><a href="/sparkjob">SparkSQL Jobs</a></li>
+                <li><a href="/sparkjobs">SparkSQL Jobs</a></li>
                 <li><a href="#">Export</a></li>
-            </ul>
-            <ul class="nav nav-sidebar">
             </ul>
         </div>
 
@@ -69,25 +89,51 @@
 
 <script>
 
+    function modal(config){
+        $(".modal .modal-body").html(config.body);
+        $(".btn-modal-cancel").click(config.cancel);
+        $(".btn-modal-confirm").click(config.confirm);
+        $(".modal").modal();
+    }
+
+
     $(function($) {
+
+        $.getJSON('/sparkjob/jobs', function (data) {
+            if(data && _.isArray(data)){
+                var menus='';
+                _.each(data, function (row) {
+                    menus += '<li><a href="/sparkjob/'+row.job_id+'">'+row.job_id+'</a></li>';
+                });
+                $(".nav-sidebar").prepend(menus+'<li><div class="line"></div></li>');
+            }
+            setCurrent();
+        });
+
+        $('table:not(.table-unsortable)').tablesort();
+
+
         {% if js %}
-        $("head").append('<script src="components/{{component}}/view.js"><\/script>');
+           $("head").append('<script src="/components/{{component}}/view.js"><\/script>');
         {% endif %}
         {% if css %}
-        $("head").append('<link rel="stylesheet" href="components/{{component}}/view.css">');
+           $("head").append('<link rel="stylesheet" href="/components/{{component}}/view.css">');
         {% endif %}
+    });
 
+    function setCurrent(){
         var curr_menu = $.cookie('curr_menu');
+        console.log('pre menu: '+curr_menu)
         var jq_menu = $(".sidebar li");
         jq_menu.click(function () {
             jq_menu.removeClass('active');
             $(this).addClass('active');
+            console.log('cache menud: '+$(this).find('a').attr('href'))
             $.cookie('curr_menu', $(this).find('a').attr('href'));
         });
         jq_menu.removeClass('active');
         jq_menu.find('a[href="'+curr_menu+'"]').parent().addClass('active')
-
-    });
+    }
 
 </script>
 

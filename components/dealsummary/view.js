@@ -23,7 +23,7 @@ $.getJSON('/getdealsummary', function(data){
             text: '<strong>'+data[0]['sum_for'].substr(0,6)+'</strong>'
         },
         xAxis: {
-            categories: dates
+            //categories: dates
         },
         yAxis: {
             min: 0,

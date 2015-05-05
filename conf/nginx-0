@@ -1,61 +1,61 @@
 
-
 upstream daos_web_server{
-    server localhost:5000;
+	ip_hash;
+	server localhost:5000 max_fails=5 fail_timeout=30s;
 }
 
 server {
 
-    listen 80 ;
-    server_name  www.daos.com;
+	listen 80 ;
+	server_name  www.daos.com;
 
-    # individual nginx logs for this web vhost
-    access_log   /var/log/nginx/logs/daos-web/access.log;
-    error_log	  /var/log/nginx/logs/daos-web/error.log;
+	# individual nginx logs for this web vhost
+	access_log   /var/log/nginx/logs/daos-web/access.log;
+	error_log	  /var/log/nginx/logs/daos-web/error.log;
 
-    root /home/admin/projects/daos-web;
-    index /components/index.html;
+	root /home/admin/projects/daos-web;
+	index /components/index.html;
 
-    #when not specify request uri, redirect to /index;
-    location = / {
-        rewrite ^ /components/index.html;
-    }
+	#when not specify request uri, redirect to /index;
+	location = / {
+		rewrite ^ /components/index.html;
+	}
 
-    location = /favicon.ico {
-       return  404;
-    }
+	location = /favicon.ico {
+		return  404;
+	}
 
-    location ~ /(.*)\.html {
-     break;
-    }
+	location ~ /(.*)\.html {
+		break;
+	}
 
-    #static files
-    location ~ ^/(images|styles|scripts)/(.*)$ {
-      root /home/admin/projects/daos-web/static;
-      expires 30d;
-      access_log off;
-    }
-
-
-    location ~ ^/components/.*(.js|.css)$ {
-      root /home/admin/projects/daos-web;
-      expires 30d;
-      access_log off;
-    }
+	#static files
+	location ~ ^/(images|styles|scripts)/(.*)$ {
+		root /home/admin/projects/daos-web/static;
+		expires 30d;
+		access_log off;
+	}
 
 
-    location ~ ^/iframes/(.*)$ {
-      root /home/admin/projects/daos-web;
-      expires 30d;
-      access_log off;
-    }
+	location ~ ^/components/.*(.js|.css)$ {
+		root /home/admin/projects/daos-web;
+		expires 30d;
+		access_log off;
+	}
 
 
-    #if request path starts with /admin, then just pass to back server
-    location ~ ^/(.*)$ {
-       proxy_pass http://daos_web_server;
-       proxy_set_header        X-Real-IP $remote_addr;
-       proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;
-       proxy_set_header        Host $http_host;
-    }
+	location ~ ^/iframes/(.*)$ {
+		root /home/admin/projects/daos-web;
+		expires 30d;
+		access_log off;
+	}
+
+
+	#if request path starts with /admin, then just pass to back server
+	location ~ ^/(.*)$ {
+		proxy_pass http://daos_web_server;
+		proxy_set_header        X-Real-IP $remote_addr;
+		proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;
+		proxy_set_header        Host $http_host;
+	}
 }

@@ -4,21 +4,20 @@
 
 {% block content %}
 
-<h1 class="sub-header" style="font-size: 18px;">SQL console</h1>
+<h1 class="sub-header" style="font-size: 18px;">SQL console (<small id="time">0 s</small>)</h1>
 <div class="alert alert-danger" role="alert">
     <p></p>
 </div>
-<small id="time">0 s</small>
-<textarea spellcheck="false" id="sql" class="form-control" placeholder="input sql ..."></textarea>
+<textarea spellcheck="false" id="sql" class="form-control" placeholder="select * from table..."></textarea>
 <button class="btn btn-sql-query btn-info" style="width: 100%;"><strong>Query</strong></button>
 
-<h1 class="sub-header" style="font-size: 18px;">Result</h1>
+<h1 class="sub-header" style="font-size: 18px;">Result (<span id="row-count" class="small">0</span>)</h1>
 <div class="panel panel-primary">
     <div class="panel-heading">
         <h3 class="panel-title" id="panel-title">Data records<a class="anchorjs-link" href="#panel-title"><span class="anchorjs-icon"></span></a></h3>
     </div>
     <div class="panel-body">
-        <div class="table-responsive" style="max-height: 500px;">
+        <div class="table-responsive">
             <table id="board" class="table table-striped">
                 <thead style="position: inherit;margin-bottom: 36px;">
                 <tr>

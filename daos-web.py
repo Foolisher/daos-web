@@ -6,15 +6,16 @@ from json import decoder
 import logging
 import sys
 import traceback
-from flask.helpers import url_for
-
-logging.basicConfig(level=logging.DEBUG)
-logging.getLogger('cassandra').setLevel(level=logging.WARN)
-from flask import request, redirect
+from flask import request
 import httplib2
 from flask import Flask
 from app import base, summary
 from app import sparkjob as sj
+from app.base import app_name
+
+
+logging.basicConfig(level=logging.DEBUG)
+logging.getLogger('cassandra').setLevel(level=logging.WARN)
 
 webapp = Flask(__name__)
 
@@ -47,50 +48,59 @@ def sqlshell():
         .render(component='sqlshell', js=True, css=True)
 
 
-@webapp.route('/sparkjob', methods=['GET', 'POST'])
-def sparkjob():
-    if request.method == 'POST':
-        logging.info("POST new job: %s" % request.form)
-        if request.form['job_id'] != '' and request.form['sql'] != '' and request.form['hour'] != '':
-            sj.add_job(request.form['job_id'], request.form['sql'], request.form['hour'], request.form['ttl'])
-    return base.template_env.get_template("sparkjob/view.html")\
-        .render(data=sj.load_jobs(), component='sparkjob', js=True, css=True)
+@webapp.route('/sparkjobs', methods=['GET', 'POST'])
+def sparkjobs():
+    return base.template_env.get_template("sparkjobs/view.html")\
+        .render(data=sj.load_jobs(), component='sparkjobs', js=True, css=True)
+
+
+@webapp.route('/sparkjob/add', methods=['POST'])
+def add_sparkjob():
+    logging.info("POST new job: %s" % request.form)
+    if request.form['job_id'] != '' and request.form['sql'] != '' and request.form['hour'] != '':
+        sj.add_job(request.form['job_id'], request.form['sql'], request.form['hour'], request.form['ttl'])
+    return base.template_env.get_template("sparkjobs/view.html") \
+        .render(data=sj.load_jobs(), component='sparkjobs', js=True, css=True)
+
+
+@webapp.route('/sparkjob/jobs', methods=['GET'])
+def get_jobs():
+    return json.dumps(sj.load_jobs())
 
 
 @webapp.route('/sparkjob/remove', methods=['PUT'])
 def remove_sparkjob():
     if request.form['job_id'] != '':
-        logging.info("del job job_id[%s]" % request.form['job_id'])
+        logging.info("del job job_id[%s%s]" % (app_name, request.form['job_id']))
         sj.remove_job(request.form['job_id'])
     return 'ok'
 
 
+# @webapp.route('/sparkjob/start/<job_id>', methods=['GET', 'POST'])
+# def start_sparkjob(job_id):
+#     try:
+#         sj.start_sparkjob(job_id)
+#     except Exception as e:
+#         logging.exception(sys.exc_info()[1])
+#         return sys.exc_info()[1]
+#     return 'job [%s] starting' % job_id
+
+
 @webapp.route('/sparkjob/result/<job_id>')
-def get_sparkjob_result(job_id):
+def sparkjob_result(job_id):
     return sj.get_result_by_jobid(job_id)
+
+
+@webapp.route('/sparkjob/<job_id>')
+def sparkjob_view(job_id):
+    return base.template_env.get_template("sparkjob/view.html") \
+        .render({'job_id': job_id}, component='sparkjob', js=True, css=True)
 
 
 # noinspection PyBroadException
 @webapp.route('/sql', methods=['GET', 'POST'])
 def sql():
-    conn = None
-    try:
-        sql_str = request.get_data(as_text=True)
-        logging.info('SQL:\n[%s]\nJSON_SQL:\n[%s]', sql_str, json.dumps({"sql": sql_str}))
-        conn = httplib2.HTTPConnectionWithTimeout('wg-mac', port=9005, timeout=60 * 5)
-        conn.request(method='POST', url='/sql', body=json.dumps({"sql": sql_str}))
-        resp = conn.getresponse()
-        result = resp.read().decode(encoding='UTF-8', errors='strict')
-        logging.info("Query result : %s, code:%s" % (result, resp.code))
-        if resp.code == 500:
-            return json.dumps({"error": result})
-        else:
-            return '{"data": %s}' % result
-    except:
-        logging.exception("SparkSQL job execution error")
-        return json.dumps({'error': str(sys.exc_info()[1])})
-    finally:
-        conn.close()
+    return sj.sql_rpc(request.get_data(as_text=True))
 
 
 if __name__ == '__main__':
